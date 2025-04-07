@@ -34,7 +34,6 @@ interface ForecastGridProps {
 }
 
 const ForecastCard: React.FC<ForecastGridProps> = ({ forecast, city }) => {
-    console.log('forecast, city', forecast, city)
   return (
     <Card sx={{ p: 3, borderRadius: 4, boxShadow: 4 }}>
       <CardContent>

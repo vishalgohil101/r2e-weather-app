@@ -13,18 +13,22 @@
   }
 
   const TodaysForecast: React.FC<Props> = ({ forecast }) => {
-    console.log("forecast", forecast);
     return (
       <Box
         sx={{
-          mb: 3,
-          p: 3,
-          borderRadius: 4,
-          boxShadow: 6,
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
           display: "flex",
           flexDirection: "column",
+          p: 3,
+          mb: 3,
+          borderRadius: 4,
+          background: "rgba(255, 255, 255, 0.05)",
+          backdropFilter: "blur(10px)",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
+          transition: "0.3s",
+          "&:hover": {
+            transform: "translateY(-5px)",
+            boxShadow: "0 12px 24px rgba(0,0,0,0.4)",
+          },
         }}
       >
         <Typography variant="h6" gutterBottom>

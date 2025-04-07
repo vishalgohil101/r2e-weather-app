@@ -46,7 +46,6 @@ export const fetchWeatherByCity = createAsyncThunk(
   async (city: string, thunkAPI) => {
     try {
       const weather = await getWeatherByCity(city);
-      console.log("w",weather);
       return weather;
     } catch (err) {
       return thunkAPI.rejectWithValue("City not found or API error");

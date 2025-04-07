@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { searchCities } from "../app/weatherAPI";
+import { useAppSelector } from "../app/hooks";
 
 type CityOption = {
   name?: string;
@@ -36,6 +37,9 @@ const SearchBar: React.FC<Props> = ({ onSearch, onAddCity }) => {
   const [recent, setRecent] = useState<CityOption[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [selectedCity, setSelectedCity] = useState<CityOption | null>(null);
+    const { status } = useAppSelector(
+      (state) => state.weather
+    );
 
   useEffect(() => {
     const saved = localStorage.getItem(RECENT_KEY);
@@ -151,12 +155,12 @@ const SearchBar: React.FC<Props> = ({ onSearch, onAddCity }) => {
         )}
       />
       <IconButton
-        disabled={!selectedCity}
+        disabled={!selectedCity || status === "failed"}
         color="primary"
         onClick={handleAdd}
-        title="Add to Watchlist"
+        title="Add city as favorite"
       >
-        <AddCircleOutlineIcon />
+        <AddCircleOutlineIcon sx={{height: 30, width: 30}}/>
       </IconButton>
     </Box>
   );

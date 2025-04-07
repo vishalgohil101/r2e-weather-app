@@ -1,13 +1,11 @@
 import axios from "axios";
 
 const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
-console.log("API_KEY", API_KEY);
 
 export const reverseGeocode = async (lat: number, lon: number) => {
   const res = await axios.get(
     `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`
   );
-  console.log("res", res);
   return res.data[0]; // returns { name, country }
 };
 
@@ -74,7 +72,6 @@ export const getWeatherByCity = async (city: string) => {
       params: { q: city, units: "metric", appid: API_KEY },
     }),
   ]);
-
   return {
     city: currentRes.data.name,
     country: currentRes.data.sys.country,
