@@ -1,3 +1,4 @@
+// SearchBar.tsx
 import React, { useEffect, useState } from "react";
 import {
   Autocomplete,
@@ -5,7 +6,9 @@ import {
   Box,
   CircularProgress,
   Typography,
+  IconButton,
 } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { searchCities } from "../app/weatherAPI";
 
 type CityOption = {
@@ -21,26 +24,24 @@ type CityOption = {
 
 interface Props {
   onSearch: (city: string) => void;
+  onAddCity: (city: CityOption) => void;
 }
 
 const RECENT_KEY = "recentCities";
 
-const SearchBar: React.FC<Props> = ({ onSearch }) => {
+const SearchBar: React.FC<Props> = ({ onSearch, onAddCity }) => {
   const [input, setInput] = useState("");
   const [options, setOptions] = useState<CityOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [recent, setRecent] = useState<CityOption[]>([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [selectedCity, setSelectedCity] = useState<CityOption | null>(null);
 
-  // Load recent searches
   useEffect(() => {
     const saved = localStorage.getItem(RECENT_KEY);
-    if (saved) {
-      setRecent(JSON.parse(saved));
-    }
+    if (saved) setRecent(JSON.parse(saved));
   }, []);
 
-  // Save recent search
   const updateRecent = (city: CityOption) => {
     const newRecent = [
       city,
@@ -52,7 +53,6 @@ const SearchBar: React.FC<Props> = ({ onSearch }) => {
     localStorage.setItem(RECENT_KEY, JSON.stringify(newRecent));
   };
 
-  // Debounced search logic
   useEffect(() => {
     if (!input) {
       setOptions([]);
@@ -71,12 +71,7 @@ const SearchBar: React.FC<Props> = ({ onSearch }) => {
           lat: item.lat,
           lon: item.lon,
         }));
-
-        if (results.length === 0) {
-          setOptions([{ label: "No city found", disabled: true }]);
-        } else {
-          setOptions(results);
-        }
+        setOptions(results.length ? results : [{ label: "No city found", disabled: true }]);
       } catch (err) {
         console.error("Autocomplete error:", err);
         setOptions([{ label: "No city found", disabled: true }]);
@@ -84,78 +79,86 @@ const SearchBar: React.FC<Props> = ({ onSearch }) => {
         setLoading(false);
         setSearchPerformed(true);
       }
-    }, 500); // debounce delay
+    }, 500);
 
     return () => clearTimeout(debounce);
   }, [input]);
 
+  const handleAdd = () => {
+    if (selectedCity && selectedCity.name && selectedCity.country) {
+      onAddCity(selectedCity);
+      updateRecent(selectedCity);
+      setInput("");
+    }
+  };
+
   return (
-    <Autocomplete
-      freeSolo
-      disableClearable
-      options={[
-        ...recent.map((c) => ({ ...c, isRecent: true })),
-        ...(searchPerformed && options.length === 0
-          ? [{ label: "No city found", disabled: true }]
-          : options),
-      ]}
-      getOptionDisabled={(option) => !!option.disabled}
-      getOptionLabel={(option) =>
-        typeof option === "string"
-          ? option
-          : option.label
-          ? option.label
-          : `${option.name}${option.state ? `, ${option.state}` : ""}, ${option.country}`
-      }
-      groupBy={(option) =>
-        option.isRecent ? "Recent Searches" : "Suggestions"
-      }
-      onInputChange={(_, value) => {
-        setInput(value);
-      }}
-      onChange={(_, value) => {
-        if (
-          typeof value !== "string" &&
-          !value.disabled &&
-          value.name &&
-          value.country
-        ) {
-          onSearch(value.name);
-          updateRecent(value);
-          setInput("");
+    <Box display="flex" alignItems="center" gap={2}>
+      <Autocomplete
+        freeSolo
+        disableClearable
+        sx={{ flex: 1 }}
+        options={[
+          ...recent.map((c) => ({ ...c, isRecent: true })),
+          ...(searchPerformed && options.length === 0
+            ? [{ label: "No city found", disabled: true }]
+            : options),
+        ]}
+        getOptionDisabled={(option) => !!option.disabled}
+        getOptionLabel={(option) =>
+          typeof option === "string"
+            ? option
+            : option.label
+            ? option.label
+            : `${option.name}${option.state ? `, ${option.state}` : ""}, ${option.country}`
         }
-      }}
-      loading={loading}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Search for cities"
-          variant="outlined"
-          fullWidth
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-                {loading ? <CircularProgress size={20} /> : null}
-                {params.InputProps.endAdornment}
-              </>
-            ),
-          }}
-        />
-      )}
-      renderOption={(props, option) => (
-        <li {...props} style={{ opacity: option.disabled ? 0.5 : 1 }}>
-          <Box>
-            <Typography>
-              {option.label
-                ? option.label
-                : `${option.name}${option.state ? `, ${option.state}` : ""}, ${option.country}`}
-            </Typography>
-          </Box>
-        </li>
-      )}
-      sx={{width: "60%"}}
-    />
+        groupBy={(option) => option.isRecent ? "Recent Searches" : "Suggestions"}
+        onInputChange={(_, value) => setInput(value)}
+        onChange={(_, value) => {
+          if (typeof value !== "string" && !value.disabled) {
+            setSelectedCity(value);
+            onSearch(value.name!);
+          }
+        }}
+        loading={loading}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Search for cities"
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {loading && <CircularProgress size={20} />}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            }}
+          />
+        )}
+        renderOption={(props, option) => (
+          <li {...props} style={{ opacity: option.disabled ? 0.5 : 1 }}>
+            <Box>
+              <Typography>
+                {option.label
+                  ? option.label
+                  : `${option.name}${option.state ? `, ${option.state}` : ""}, ${option.country}`}
+              </Typography>
+            </Box>
+          </li>
+        )}
+      />
+      <IconButton
+        disabled={!selectedCity}
+        color="primary"
+        onClick={handleAdd}
+        title="Add to Watchlist"
+      >
+        <AddCircleOutlineIcon />
+      </IconButton>
+    </Box>
   );
 };
 

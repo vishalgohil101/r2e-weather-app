@@ -63,7 +63,7 @@
 // export default App;
 
 // src/App.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -83,16 +83,42 @@ import ForecastCard from "./components/ForecastCard";
 import SearchBar from "./components/SearchBar";
 import TodaysForecast from "./components/TodaysForecast";
 import WeeklyForecast from "./components/WeeklyForecast";
-import { mt } from "./../node_modules/date-fns/locale/mt";
+import WatchedCities from "./components/WatchedCities";
+
+const WATCHLIST_KEY = "watchedCities";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
+  const [watchedCities, setWatchedCities] = useState<any[]>([]);
   const { userLocation, status, error } = useAppSelector(
     (state) => state.weather
   );
+  console.log("🚀 ~ userLocation:", userLocation)
   const isSm = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
   console.log("isSm", isSm);
 
+  useEffect(() => {
+    const saved = localStorage.getItem(WATCHLIST_KEY);
+    if (saved) {
+      setWatchedCities(JSON.parse(saved));
+    }
+  }, []);
+
+  const addCity = (city: any) => {
+    const exists = watchedCities.some((c) => c.name === city.name);
+    if (!exists) {
+      const updated = [...watchedCities, city];
+      setWatchedCities(updated);
+      localStorage.setItem(WATCHLIST_KEY, JSON.stringify(updated));
+    }
+  };
+
+  const removeCity = (name: string) => {
+    const updated = watchedCities.filter((c) => c.name !== name);
+    setWatchedCities(updated);
+    localStorage.setItem(WATCHLIST_KEY, JSON.stringify(updated));
+  };
+  
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -117,20 +143,18 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Box
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-        gap={5}
-        p={2}
-      >
-        <Typography variant={isSm ? "h6" : "h4"} align="center">
+      <Box display={"flex"} alignItems={"center"} gap={5} p={2}>
+        <Typography
+          variant={isSm ? "h6" : "h4"}
+          align="center"
+          sx={{ flex: 0.18 }}
+        >
           Weather 🌦️
         </Typography>
-        <SearchBar onSearch={handleSearch} />
-        {!isSm && (
-          <Avatar variant="circular" sx={{ height: "50px", width: "50px" }} />
-        )}
+        <Box flex={!isSm ? 0.615 : 1} maxWidth="lg">
+          <SearchBar
+            onSearch={handleSearch} onAddCity={addCity}/>
+        </Box>
       </Box>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {status === "loading" && (
@@ -143,6 +167,7 @@ const App: React.FC = () => {
         {userLocation && (
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 6 }}>
+              <WatchedCities cities={watchedCities} onRemoveCity={removeCity}/>
               <WeatherCard data={userLocation.current} />
             </Grid>
 

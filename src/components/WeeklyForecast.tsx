@@ -45,7 +45,7 @@ const WeeklyForecast: React.FC<Props> = ({ forecast }) => {
               sx={{
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
                 borderRadius: 4,
-                p: 2,
+                p: 1,
                 backdropFilter: "blur(6px)",
                 display: "flex",
                 justifyContent: "space-between",
@@ -60,7 +60,7 @@ const WeeklyForecast: React.FC<Props> = ({ forecast }) => {
               <img
                 src={`https://openweathermap.org/img/wn/${day.weather[0].icon}.png`}
                 alt={day.weather[0].description}
-                width={48}
+                width={50}
               />
               <Box display={"flex"}>
                 <Typography variant="body2" fontWeight={'bold'}>
