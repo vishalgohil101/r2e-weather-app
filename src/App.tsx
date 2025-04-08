@@ -58,6 +58,7 @@ const App: React.FC = () => {
       />
 
       <Main
+        isSm={isSm}
         userLocation={userLocation}
         status={status}
         error={error}

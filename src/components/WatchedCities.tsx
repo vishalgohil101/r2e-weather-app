@@ -28,6 +28,7 @@ interface WeatherData {
 interface Props {
   cities: WatchedCity[];
   onRemoveCity: (name: string) => void;
+  isSm: boolean;
 }
 const backgroundImages = [
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
@@ -37,7 +38,7 @@ const backgroundImages = [
   "https://images.unsplash.com/photo-1580193769210-b8d1c049a7d9?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 
-const WatchedCities: React.FC<Props> = ({ cities, onRemoveCity }) => {
+const WatchedCities: React.FC<Props> = ({ cities, onRemoveCity, isSm }) => {
   const [weatherData, setWeatherData] = useState<Record<string, WeatherData>>(
     {}
   );
@@ -107,7 +108,7 @@ const WatchedCities: React.FC<Props> = ({ cities, onRemoveCity }) => {
         "&::-webkit-scrollbar": {
           display: "none",
         },
-        background:'transparent',
+        background: "transparent",
       }}
     >
       {cities.map((city, index) => {
@@ -181,21 +182,27 @@ const WatchedCities: React.FC<Props> = ({ cities, onRemoveCity }) => {
                 <Typography variant="subtitle1" zIndex={2} position="relative">
                   {data?.condition ?? "--"}
                 </Typography>
-                <Box display={"flex"} gap={2} position="relative" zIndex={2}>
+                <Box
+                  display={"flex"}
+                  alignItems={"center"}
+                  gap={2}
+                  position="relative"
+                  zIndex={2}
+                >
                   <Typography variant="body2" mt={1}>
                     Humidity: <strong>{data?.humidity ?? "--"} %</strong>
                   </Typography>
                   <Typography variant="body2" mt={1}>
-                    | Pressure: <strong>{data?.pressure ?? "--"} hPa</strong>
+                    Pressure: <strong>{data?.pressure ?? "--"} hPa</strong>
                   </Typography>
                   <Typography variant="body2" mt={1}>
-                    | Visibility :{" "}
+                    Visibility :{" "}
                     <strong>{`${
                       (data?.visibility / 1000).toFixed(1) ?? "--"
                     } km`}</strong>
                   </Typography>
                   <Typography variant="body2" mt={1}>
-                    | Wind speed: <strong>{data?.windSpeed ?? "--"} m/s</strong>
+                    Wind speed: <strong>{data?.windSpeed ?? "--"} m/s</strong>
                   </Typography>
                 </Box>
               </CardContent>

@@ -27,7 +27,9 @@ const Header: React.FC<Props> = ({
   return (
     <Box
       display="flex"
-      alignItems="center"
+      flexDirection={isSm ? "column" : "row"}
+      width={isSm ? "100%" : "auto"}
+      alignItems={isSm ? "" : "center"}
       gap={isSm ? 1 : 2}
       p={isSm ? 1 : 2}
       flexWrap="wrap"
@@ -44,30 +46,38 @@ const Header: React.FC<Props> = ({
       <Box flex={1}>
         <SearchBar onSearch={onSearch} onAddCity={onAddCity} />
       </Box>
-      {showRefresh && (
-        <Box
-          textAlign="center"
-          pr={isSm ? 2 : 4}
-          display={isSm ? "flex" : "block"}
-          flexDirection={isSm ? "column" : "row"}
-          alignItems={"center"}
-          gap={isSm ? 0 : 1}
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        {showRefresh && (
+          <Box
+            textAlign="center"
+            pr={isSm ? 2 : 4}
+            display={isSm ? "flex" : "block"}
+            flexDirection={isSm ? "column" : "row"}
+            alignItems={"center"}
+            gap={isSm ? 0 : 1}
+          >
+            <Typography variant="caption" color="text.secondary">
+              Last updated: {lastUpdated || "just now"}
+            </Typography>
+            <IconButton onClick={onRefresh} color="primary">
+              <Tooltip title="Refresh now">
+                <RefreshIcon />
+              </Tooltip>
+            </IconButton>
+          </Box>
+        )}
+        <Tooltip
+          title={`Switch to ${mode === "light" ? "dark" : "light"} mode`}
         >
-          <Typography variant="caption" color="text.secondary">
-            Last updated: {lastUpdated || "just now"}
-          </Typography>
-          <IconButton onClick={onRefresh} color="primary">
-            <Tooltip title="Refresh now">
-              <RefreshIcon />
-            </Tooltip>
+          <IconButton onClick={toggleMode} color="inherit">
+            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
           </IconButton>
-        </Box>
-      )}
-      <Tooltip title={`Switch to ${mode === "light" ? "dark" : "light"} mode`}>
-        <IconButton onClick={toggleMode} color="inherit">
-          {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-        </IconButton>
-      </Tooltip>
+        </Tooltip>
+      </Box>
     </Box>
   );
 };

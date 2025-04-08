@@ -11,10 +11,12 @@ interface Props {
   status: string;
   error: string | null;
   watchedCities: any[];
+  isSm: boolean;
   onRemoveCity: (name: string) => void;
 }
 
 const Main: React.FC<Props> = ({
+  isSm,
   userLocation,
   status,
   error,
@@ -66,7 +68,7 @@ const Main: React.FC<Props> = ({
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
             <WeatherCard data={userLocation.current} />
-            <WatchedCities cities={watchedCities} onRemoveCity={onRemoveCity} />
+            <WatchedCities cities={watchedCities} onRemoveCity={onRemoveCity} isSm={isSm} />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <TodaysForecast forecast={userLocation.forecast?.list || []} />
