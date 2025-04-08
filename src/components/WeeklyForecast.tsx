@@ -1,11 +1,10 @@
-// src/components/WeeklyForecast.tsx
-
 import React from "react";
 import { Box, Typography, Grid } from "@mui/material";
 import { format } from "date-fns";
 
 interface ForecastItem {
   dt: number;
+  dt_txt: string;
   main: { temp_min: number; temp_max: number };
   weather: { icon: string; description: string }[];
 }
@@ -14,8 +13,25 @@ interface Props {
   forecast: ForecastItem[];
 }
 
+// Group forecast data into 7 days
+const groupForecastByDay = (list: ForecastItem[]) => {
+  const days: Record<string, ForecastItem[]> = {};
+
+  list.forEach((entry) => {
+    const date = entry.dt_txt.split(" ")[0]; // e.g., "2025-04-09"
+    if (!days[date]) days[date] = [];
+    days[date].push(entry);
+  });
+
+  return Object.values(days)
+    .slice(0, 7)
+    .map((entries) => {
+      return entries.find((e) => e.dt_txt.includes("12:00:00")) || entries[0];
+    });
+};
+
 const WeeklyForecast: React.FC<Props> = ({ forecast }) => {
-  const daily = forecast.filter((_, i) => i % 8 === 0); // Approx every 24h
+  const daily = groupForecastByDay(forecast);
 
   return (
     <Box
@@ -31,6 +47,7 @@ const WeeklyForecast: React.FC<Props> = ({ forecast }) => {
       <Typography variant="h6" gutterBottom fontWeight="bold">
         7-Day Forecast
       </Typography>
+
       <Grid
         container
         spacing={1}
@@ -38,7 +55,7 @@ const WeeklyForecast: React.FC<Props> = ({ forecast }) => {
         alignItems="center"
         flexDirection={"column"}
       >
-        {daily.slice(0, 7).map((day, index) => (
+        {daily.map((day, index) => (
           <Grid size={{ xs: 12 }} key={index}>
             <Box
               textAlign="center"
@@ -54,20 +71,27 @@ const WeeklyForecast: React.FC<Props> = ({ forecast }) => {
                 color: "#fff",
               }}
             >
-              <Typography variant="subtitle1" fontWeight="bold">
+              <Typography variant="subtitle1" fontWeight="bold" ml={2}>
                 {format(new Date(day.dt * 1000), "EEE")}
               </Typography>
-              <img
-                src={`https://openweathermap.org/img/wn/${day.weather[0].icon}.png`}
-                alt={day.weather[0].description}
-                width={50}
-              />
-              <Box display={"flex"}>
-                <Typography variant="body2" fontWeight={'bold'}>
-                  {Math.round(day.main.temp_max)}° /{" "}
+              <Box
+                minWidth={"100px"}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"center"}
+              >
+                <img
+                  src={`https://openweathermap.org/img/wn/${day.weather[0].icon}.png`}
+                  alt={day.weather[0].description}
+                  width={50}
+                />
+              </Box>
+              <Box display={"flex"} mr={2}>
+                <Typography variant="body2" fontWeight="bold">
+                  {day.main.temp_max}° /{" "}
                 </Typography>
                 <Typography variant="body2" color="lightgray" ml={1}>
-                  {Math.round(day.main.temp_min)}°
+                  {day.main.temp_min}°
                 </Typography>
               </Box>
             </Box>

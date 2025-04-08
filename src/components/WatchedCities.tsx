@@ -30,11 +30,11 @@ interface Props {
   onRemoveCity: (name: string) => void;
 }
 const backgroundImages = [
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb", // Clear sky
+  "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
   "https://plus.unsplash.com/premium_photo-1669809948017-518b5d800d73?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1592210454359-9043f067919b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Cloudy
+  "https://images.unsplash.com/photo-1592210454359-9043f067919b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   "https://images.unsplash.com/photo-1527482797697-8795b05a13fe?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1580193769210-b8d1c049a7d9?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Fog
+  "https://images.unsplash.com/photo-1580193769210-b8d1c049a7d9?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 
 const WatchedCities: React.FC<Props> = ({ cities, onRemoveCity }) => {
@@ -102,14 +102,13 @@ const WatchedCities: React.FC<Props> = ({ cities, onRemoveCity }) => {
       my={3}
       maxHeight={"480px"}
       overflow={"auto"}
-      // sx={{
-      //   scrollbarWidth: "none", // For Firefox
-      //   "&::-webkit-scrollbar": {
-      //     display: "none", // For Chrome, Safari, and Edge
-      //   },
-      //   background:'transparent',
-      //   // py: 3,
-      // }}
+      sx={{
+        scrollbarWidth: "none",
+        "&::-webkit-scrollbar": {
+          display: "none",
+        },
+        background:'transparent',
+      }}
     >
       {cities.map((city, index) => {
         const data = weatherData[city.name];
@@ -131,7 +130,6 @@ const WatchedCities: React.FC<Props> = ({ cities, onRemoveCity }) => {
                 transition: "0.3s",
                 "&:hover": {
                   transform: "translateY(-5px)",
-                  boxShadow: "0 12px 24px rgba(0,0,0,0.4)",
                 },
                 "&::before": {
                   content: '""',
@@ -180,7 +178,7 @@ const WatchedCities: React.FC<Props> = ({ cities, onRemoveCity }) => {
                   </Typography>
                 </Box>
 
-                <Typography variant="subtitle1">
+                <Typography variant="subtitle1" zIndex={2} position="relative">
                   {data?.condition ?? "--"}
                 </Typography>
                 <Box display={"flex"} gap={2} position="relative" zIndex={2}>

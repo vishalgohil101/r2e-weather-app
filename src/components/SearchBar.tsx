@@ -143,7 +143,7 @@ const SearchBar: React.FC<Props> = ({ onSearch, onAddCity }) => {
           />
         )}
         renderOption={(props, option) => (
-          <li {...props} style={{ opacity: option.disabled ? 0.5 : 1 }}>
+          <li {...props} key={`${option.name}-${option.state}`} style={{ opacity: option.disabled ? 0.5 : 1 }}>
             <Box>
               <Typography>
                 {option.label

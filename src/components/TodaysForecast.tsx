@@ -54,10 +54,10 @@
                 <img
                   src={`https://openweathermap.org/img/wn/${item.weather[0].icon}.png`}
                   alt=""
-                  width={48}
+                  width={50}
                 />
                 <Typography variant="body1">
-                  {Math.round(item.main.temp)}°
+                  {item.main.temp}°
                 </Typography>
               </Box>
             </Grid>

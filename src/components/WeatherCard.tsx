@@ -5,7 +5,6 @@ import {
   Typography,
   Grid,
   Box,
-  useTheme,
 } from "@mui/material";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import OpacityIcon from "@mui/icons-material/Opacity";
@@ -15,6 +14,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloudIcon from "@mui/icons-material/Cloud";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
+import { format } from "date-fns"; 
 
 interface Weather {
   id: number;
@@ -58,14 +58,16 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ data }) => {
   const {
     name,
     sys: { country, sunrise, sunset },
-    main: { temp, feels_like, humidity, pressure, temp_min, temp_max },
-    weather,
+    main: { temp, humidity, pressure },
     wind,
     visibility,
     clouds,
   } = data;
 
-  const theme = useTheme();
+
+  const now = new Date();
+  const formattedDay = format(now, "EEEE"); // e.g., "Tuesday"
+  const formattedDate = format(now, "MMMM d, yyyy"); // e.g., "April 8, 2025"
 
   return (
     <Card
@@ -84,9 +86,9 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ data }) => {
           Weather in {name}, {country}
         </Typography>
 
-        {/* <Typography variant="subtitle1" gutterBottom>
-          {weather[0].main} — {weather[0].description}
-        </Typography> */}
+        <Typography variant="subtitle1" gutterBottom color="lightgray">
+          {formattedDay}, {formattedDate}
+        </Typography>
 
         <Grid
           container
@@ -103,18 +105,11 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ data }) => {
             justifyContent="space-between"
             alignItems="center"
             width="100%"
-            // p={2}
           >
             <Box display="flex" alignItems="center">
               <ThermostatIcon sx={{ mr: 1 }} />
               <Typography>Temp: {temp}°C</Typography>
             </Box>
-            {/* <Box display="flex" alignItems="center">
-              <ThermostatIcon sx={{ mr: 1 }} />
-              <Typography>
-                Min/Max: {temp_min}°C / {temp_max}°C
-              </Typography>
-            </Box> */}
             <Box display="flex" alignItems="center">
               <AirIcon sx={{ mr: 1 }} />
               <Typography>Wind sp: {wind.speed} m/s</Typography>
@@ -128,7 +123,6 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ data }) => {
             justifyContent="space-between"
             alignItems="center"
             width="100%"
-            // p={2}
           >
             <Box display="flex" alignItems="center">
               <OpacityIcon sx={{ mr: 1 }} />
@@ -149,7 +143,6 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ data }) => {
             justifyContent="space-between"
             alignItems="center"
             width="100%"
-            // p={2}
           >
             <Box display="flex" alignItems="center">
               <WbSunnyIcon sx={{ mr: 1 }} />
@@ -171,7 +164,6 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ data }) => {
             justifyContent="space-between"
             alignItems="center"
             width="100%"
-            // p={2}
           >
             <Box display="flex" alignItems="center">
               <CompressIcon sx={{ mr: 1 }} />
